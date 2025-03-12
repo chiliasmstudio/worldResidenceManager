@@ -1,22 +1,4 @@
-/*
- *
- *  * WorldMISF - cms of mc-serverworld
- *  * Copyright (C) 2019-2020 mc-serverworld
- *  *
- *  * This program is free software: you can redistribute it and/or modify
- *  * it under the terms of the GNU General Public License as published by
- *  * the Free Software Foundation, either version 3 of the License, or
- *  * (at your option) any later version.
- *  *
- *  * This program is distributed in the hope that it will be useful,
- *  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- *  * GNU General Public License for more details.
- *  *
- *  * You should have received a copy of the GNU General Public License
- *  * along with this program. If not, see <http://www.gnu.org/licenses/>.
- *
- */
+
 
 package com.chiliasmstudio.worldResidenceManager.Listeners;
 
@@ -43,7 +25,7 @@ public class ResidenceCreation implements Listener {
         long max = worldResidenceManager.sqlDatabase.getMaxSize(event.getPlayer().getUniqueId());
         long current = worldResidenceManager.sqlDatabase.getCurrentSize(event.getPlayer().getUniqueId());
         final long newSize = event.getResidence().getXZSize();
-        final long freeSize = 2500;
+        final long freeSize = worldResidenceManager.sqlDatabase.getFreeSize(event.getPlayer().getUniqueId());
         final double costPerBlock = 1;
 
         if (current + newSize > max) {
@@ -75,11 +57,17 @@ public class ResidenceCreation implements Listener {
             event.getPlayer().sendMessage(Component.text("您已支付 " + cost + " 元來購買額外保護區格數").color(TextColor.fromHexString("#42FA3E")));
         }
 
+
+        // Notify the player about remaining free blocks
+        long remainingFreeBlocks = Math.max(0, freeSize - current - newSize);
+        event.getPlayer().sendMessage(Component.text("您還有 " + remainingFreeBlocks + " 格免費額度").color(TextColor.fromHexString("#42A5FA")));
+
         // Notify the player of successful residence creation
         long remainingBlocks = max - (current + newSize);
-
         // Notify the player of successful residence creation and remaining blocks
         event.getPlayer().sendMessage(Component.text("保護區創建成功! 您還有 " + remainingBlocks + " 保護區額度").color(TextColor.fromHexString("#42FA3E")));
+
+        worldResidenceManager.sqlDatabase.addCurrentSize(event.getPlayer().getUniqueId(), newSize);
     }
 
 }

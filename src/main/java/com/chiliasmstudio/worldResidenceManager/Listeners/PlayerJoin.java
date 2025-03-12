@@ -22,7 +22,7 @@ public class PlayerJoin implements Listener {
         if (worldResidenceManager.sqlDatabase.isDataExists(playerId)) {
             worldResidenceManager.getComponentLogger().info("Player " + playerId + " already exists");
         } else {
-            worldResidenceManager.sqlDatabase.insertData(playerId, 40000, 0);
+            worldResidenceManager.sqlDatabase.insertData(playerId, 40000, 10000,0);
             worldResidenceManager.getComponentLogger().info("Player " + playerId + " added");
         }
     }

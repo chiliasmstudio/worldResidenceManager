@@ -1,9 +1,9 @@
 package com.chiliasmstudio.worldResidenceManager;
 
-import com.chiliasmstudio.worldResidenceManager.Commands.AddMaxSize;
-import com.chiliasmstudio.worldResidenceManager.Commands.ReduceMaxSize;
+import com.chiliasmstudio.worldResidenceManager.Commands.*;
 import com.chiliasmstudio.worldResidenceManager.Listeners.PlayerJoin;
 import com.chiliasmstudio.worldResidenceManager.Listeners.ResidenceCreation;
+import com.chiliasmstudio.worldResidenceManager.Listeners.ResidenceDelete;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
@@ -39,39 +39,50 @@ public final class WorldResidenceManager extends JavaPlugin {
         EconomyIO economyIO = new EconomyIO(this);
         getServer().getPluginManager().registerEvents(new PlayerJoin(this), this);
         getServer().getPluginManager().registerEvents(new ResidenceCreation(this), this);
+        getServer().getPluginManager().registerEvents(new ResidenceDelete(this), this);
 
         LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("resman")
-                .then(Commands.literal("addmaxsize")
-                        .then(Commands.argument("target_palyer", ArgumentTypes.player())
-                                .then(Commands.argument("maxsize",LongArgumentType.longArg())
-                                        .executes(AddMaxSize::addMaxSize)
-                )))
+                .then(Commands.literal("add")
+                        .then(Commands.literal("maxsize")
+                                .then(Commands.argument("target_palyer", ArgumentTypes.player())
+                                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
+                                                .executes(AddMaxSize::addMaxSize)
+                                        )))
+                        .then(Commands.literal("freesize")
+                                .then(Commands.argument("target_palyer", ArgumentTypes.player())
+                                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
+                                                .executes(AddFreeSize::addFreeSize)
+                                        )))
+                        .then(Commands.literal("currentsize")
+                                .then(Commands.argument("target_palyer", ArgumentTypes.player())
+                                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
+                                                .executes(AddCurrentSize::addCurrentSize)
+                                        )))
+                ).then(Commands.literal("reduce")
+                        .then(Commands.literal("maxsize")
+                                .then(Commands.argument("target_palyer", ArgumentTypes.player())
+                                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
+                                                .executes(ReduceMaxSize::reduceMaxSize)
+                                        )))
 
-                .then(Commands.literal("reducemaxsize")
-                        .then(Commands.argument("target_palyer", ArgumentTypes.player())
-                                .executes(ReduceMaxSize::reduceMaxSize))
-                );
+                        .then(Commands.literal("freesize")
+                                .then(Commands.argument("target_palyer", ArgumentTypes.player())
+                                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
+                                                .executes(ReduceFreeSize::reduceFreeSize)
+                                        )))
+                        .then(Commands.literal("currentsize")
+                                .then(Commands.argument("target_palyer", ArgumentTypes.player())
+                                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
+                                                .executes(ReduceCurrentSize::reduceCurrentSize)
+                                        )))
+                )
+                ;
 
         LiteralCommandNode<CommandSourceStack> buildCommand = command.build();
         this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
             commands.registrar().register(buildCommand);
         });
 
-        /*
-        LiteralArgumentBuilder<CommandSourceStack> command = Commands.literal("resman")
-                .then(Commands.literal("addmaxsize")
-                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
-                                .executes(AddMaxSize::addMaxSize)))
-
-                .then(Commands.literal("reducemaxsize")
-                        .then(Commands.argument("maxsize",LongArgumentType.longArg())
-                                .executes(ReduceMaxSize::reduceMaxSize)));
-
-        LiteralCommandNode<CommandSourceStack> buildCommand = command.build();
-        this.getLifecycleManager().registerEventHandler(LifecycleEvents.COMMANDS, commands -> {
-            commands.registrar().register(buildCommand);
-        });
-        */
     }
 
     @Override

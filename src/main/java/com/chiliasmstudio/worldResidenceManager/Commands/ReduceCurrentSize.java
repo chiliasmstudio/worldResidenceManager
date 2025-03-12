@@ -10,9 +10,9 @@ import io.papermc.paper.command.brigadier.argument.resolvers.selector.PlayerSele
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-public class ReduceMaxSize {
+public class ReduceCurrentSize {
 
-    public static int reduceMaxSize(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
+    public static int reduceCurrentSize(CommandContext<CommandSourceStack> ctx) throws CommandSyntaxException {
         long maxsize = LongArgumentType.getLong(ctx, "maxsize"); // Retrieve the speed argument
         CommandSender sender = ctx.getSource().getSender(); // Retrieve the command sender
         final PlayerSelectorArgumentResolver targetResolver = ctx.getArgument("target_palyer", PlayerSelectorArgumentResolver.class);
@@ -23,8 +23,8 @@ public class ReduceMaxSize {
             return 0;
         }
 
-        WorldResidenceManager.worldResidenceManager.sqlDatabase.reduceMaxSize(target.getUniqueId(),maxsize);
-        sender.sendRichMessage(target.getName()+ " maxsize now is: " + WorldResidenceManager.worldResidenceManager.sqlDatabase.getMaxSize(target.getUniqueId()));
+        WorldResidenceManager.worldResidenceManager.sqlDatabase.reduceCurrentSize(target.getUniqueId(),maxsize);
+        sender.sendRichMessage(target.getName()+ " current size now is: " + WorldResidenceManager.worldResidenceManager.sqlDatabase.getCurrentSize(target.getUniqueId()));
         return Command.SINGLE_SUCCESS;
     }
 }
